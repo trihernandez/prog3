@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
     //obtain the coordinates of all points as a pair
     double score = 0;
 
-    double m = std::stoi(argv[1]);
-    double c = std::stoi(argv[2]);
-    double d = std::stoi(argv[3]);
+    double m = std::stod(argv[1]);
+    double c = std::stod(argv[2]);
+    double d = std::stod(argv[3]);
     std::string a = argv[4];
     std::string b = argv[5];
 
