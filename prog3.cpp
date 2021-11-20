@@ -33,9 +33,9 @@ int main(int argc, char *argv[])
     std::string a = argv[4];
     std::string b = argv[5];
 
-    std::cout << "m: " << a << "\n";
-    std::cout << "c: " << b << "\n";
-    std::cout << "d: " << b << "\n";
+    std::cout << "m: " << m << "\n";
+    std::cout << "c: " << c << "\n";
+    std::cout << "d: " << d << "\n";
     std::cout << "a: " << a << "\n";
     std::cout << "b: " << b << "\n";
     
