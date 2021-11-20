@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         i1_a++;
         i2_a++;
     }
-    std::cout << m << "\n";
+    std::cout << score << "\n";
 
     return 0;
 }
