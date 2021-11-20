@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
 {    
     //obtain the coordinates of all points as a pair
     double score = 0;
+    std::string a_compared = "";
+    std::string b_compared = "";
 
     double m = std::stod(argv[1]);
     double c = std::stod(argv[2]);
@@ -38,6 +40,27 @@ int main(int argc, char *argv[])
     std::cout << "d: " << d << "\n";
     std::cout << "a: " << a << "\n";
     std::cout << "b: " << b << "\n";
-    
+
+    int l_a = a.length();
+    int l_b = b.length();
+    int l_diff = l_a - l_b;
+
+    int i1_a = 0;
+    int i1_b = 0;
+    int i2_a = 0;
+    int i2_b = 0;
+
+    while((i1_a < l_a) &&(i1_b < l_b))
+    {
+        //characters are matched
+        if( a[i1_a] == b[i1_a] )
+        {
+            score += m;
+        }
+        i1_a++;
+        i2_a++;
+    }
+    std::cout << m << "\n";
+
     return 0;
 }
