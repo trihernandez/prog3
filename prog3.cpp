@@ -206,8 +206,8 @@ int main(int argc, char *argv[])
     double d = -1;
     //std::string a = "ACACACTA";
     //std::string b = "AGCACACA";
-    std::string a = "ACACACTAC";
-    std::string b = "AGCACACAG";
+    //std::string a = "ACACACTAC";
+    //std::string b = "AGCACACAG";
     //std::string a = "ACACACTEEEEEEEACACTA";
     //std::string b = "AGCACACAAGCACACA";
     /*
