@@ -34,7 +34,6 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
     //cout << "worst-case:    " << worst_case << "\n";
     //cout << "\n";
 
-
     //end of sequence
     if( a.length() == 0 && b.length() == 0 )
     {
@@ -157,8 +156,8 @@ int main(int argc, char *argv[])
     double m = 2;
     double c = -0.5;
     double d = -1;
-    std::string a = "ACACACTAC";
-    std::string b = "AGCACACAG";
+    std::string a = "ACATGAGACAGACAGACCCCCAGAGACAGACCCCTAGACACAGAGAGAGTATGCAGGACAGGGTTTTTGCCCAGGGTGGCAGTATG";
+    std::string b = "AGGATTGAGGTATGGGTATGTTCCCGATTGAGTAGCCAGTATGAGCCAGAGTTTTTTACAAGTATTTTTCCCAGTAGCCAGAGAGAGAGTCACCCAGTACAGAGAGC";
     /*
     A=
         8.5
