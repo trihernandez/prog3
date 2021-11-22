@@ -28,11 +28,11 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
     //the answer f
     std::tuple<double, std::string, std::string> answer(current_score, a_matched, b_matched);
 
-    cout << std::get<1>(answer) << "\n";
-    cout << std::get<2>(answer) << "\n";
-    cout << "current score: " <<std::get<0>(answer) << "\n";
-    cout << "worst-case:    " << worst_case << "\n";
-    cout << "\n";
+    //cout << std::get<1>(answer) << "\n";
+    //cout << std::get<2>(answer) << "\n";
+    //cout << "current score: " <<std::get<0>(answer) << "\n";
+    //cout << "worst-case:    " << worst_case << "\n";
+    //cout << "\n";
 
 
     //end of sequence
