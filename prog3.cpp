@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     double m = 2;
     double c = -0.5;
     double d = -1;
-    std::string a = "ACACACTAACACACTA";
+    std::string a = "ACACACTEEEEEEEACACTA";
     std::string b = "AGCACACAAGCACACA";
     /*
     A=
