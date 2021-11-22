@@ -1,10 +1,3 @@
-//My re-submission right before the deadline
-//Deleted commented-out code I no longer needed and added a case such that
-//  the edge index of one vertex is less than the other
-//Disabled the print of the time the program ran
-//I added this because I asked fixing the order of the indexed points on piazza,
-//  but the answer on there was not very clear.
-
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -21,22 +14,81 @@ using namespace std;
 using namespace std::chrono;
 
 
+double optimal_score(double m, double c, double d, std::string a, std::string b)
+{
+    //case #1: performing the max number of matches
+    //and the minimum number of deletions
+    double max_matches = m * std::min( (int)a.length(), (int)b.length() );
+    double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
+    double b1 = max_matches + min_deletions;
+    
+    //case #2: performing the max number of changes
+    //and the minimum number of deletions
+    double max_changes = c * std::min( (int)a.length(), (int)b.length() );
+    double b2 = max_changes + min_deletions;
+    
+    //case #3: deleting every base of a from b and vice-versa
+    double b3 = d * ( (int)a.length() + (int)b.length() );
+    
+    //return the maximum of the cases
+    if(( b1 > b2 ) && ( b1 > b3 ))
+        return b1;
+    if(( b2 > b1 ) && ( b2 > b3 ))
+        return b2;
+    return b3;
+}
+
+double worst_case_score(double m, double c, double d, std::string a, std::string b)
+{
+    //case #1: performing the max number of matches
+    //and the minimum number of deletions
+    double max_matches = m * std::min( (int)a.length(), (int)b.length() );
+    double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
+    double b1 = max_matches + min_deletions;
+    
+    //case #2: performing the max number of changes
+    //and the minimum number of deletions
+    double max_changes = c * std::min( (int)a.length(), (int)b.length() );
+    double b2 = max_changes + min_deletions;
+    
+    //case #3: deleting every base of a from b and vice-versa
+    double b3 = d * ( (int)a.length() + (int)b.length() );
+    
+    //return the maximum of the cases
+    if(( b1 < b2 ) || ( b1 < b3 ))
+        return b1;
+    if(( b2 < b1 ) || ( b2 < b3 ))
+        return b2;
+    return b3;
+}
 
 std::tuple<double, std::string, std::string> matching_score(double m, double c, double d, std::string a, std::string b, 
-                              double current_score, std::string a_matched, std::string b_matched, double worst_case)
+                              double current_score, std::string a_matched, std::string b_matched, 
+                              double highest_possible_score, double * highest_score)
 {
-    //the answer f
+    //the answer for the problem
     std::tuple<double, std::string, std::string> answer(current_score, a_matched, b_matched);
 
-    //cout << std::get<1>(answer) << "\n";
-    //cout << std::get<2>(answer) << "\n";
-    //cout << "current score: " <<std::get<0>(answer) << "\n";
-    //cout << "worst-case:    " << worst_case << "\n";
-    //cout << "\n";
+    /*
+    cout << std::get<1>(answer) << "\n";
+    cout << std::get<2>(answer) << "\n";
+    cout << " current score:         " <<std::get<0>(answer) << "\n";
+    cout << " highest possible score:" << highest_possible_score << "\n";
+    cout << "*highest_score:         " << *highest_score << "\n";
+    cout << " highest_score:         " << highest_score << "\n";
+    cout << "\n";
+    */
 
+    //sub-optimal branch; will only be below worst-case score.  Stop here.
+    if( highest_possible_score < *highest_score )
+    {
+        return answer;
+    }
     //end of sequence
     if( a.length() == 0 && b.length() == 0 )
     {
+        if(m > *highest_score )
+            *highest_score = m;
         return answer;
     }
     //end of a; b is longer, and therefore rest of a was deleted
@@ -45,9 +97,11 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
         std::get<0>(answer) += d;
         std::get<1>(answer) += "_";
         std::get<2>(answer) += b[0];
+        double optimal = std::get<0>(answer) + optimal_score(m, c, d, a, b.substr(1));
 
         return matching_score(m,c,d,a,b.substr(1),
-                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer), worst_case);
+                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer),
+                                optimal,highest_score);
     }
     //end of b; a is longer, and therefore rest of b was deleted
     else if( b.length() == 0 )
@@ -55,74 +109,68 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
         std::get<0>(answer) += d;
         std::get<1>(answer) += a[0];
         std::get<2>(answer) += "_";
+        double optimal = std::get<0>(answer) + optimal_score(m, c, d, a.substr(1), b);
 
         return matching_score(m,c,d,a.substr(1),b,
-                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer), worst_case);
+                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer),
+                                optimal,highest_score);
     }
-    //characters are matched, and this branch does not split
-    else if( a[0] == b[0] )
-    {
-        std::get<0>(answer) += m;
-        std::get<1>(answer) += a[0];
-        std::get<2>(answer) += b[0];
-        
-        //re-calculate w using the remaning sub-strings
-        double min_deletions = d * std::abs( (int)a.length()-1 - (int)b.length()-1 );
-        double max_changes = c * std::min( (int)a.length()-1, (int)b.length()-1 );
-        double w = max_changes + min_deletions;
-        if(current_score > 0)
-            w += current_score;
-
-        return matching_score(m,c,d,a.substr(1),b.substr(1),
-                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer), w);
-    }
-    //lower than the worst-case score, return here and reduce current_score by 1
-    //to prevent this case from being chose at the end
-    if( current_score < worst_case )
-    {
-        std::get<0>(answer) -= 1.0;
-        return answer;
-    }
-    //characters are different, and this is the end of this sub-problem
-    else if( (a[0] != b[0]) && (a.length() == 1) && (b.length() == 1) )
-    {
-        std::get<0>(answer) += c;
-        std::get<1>(answer) += a[0];
-        std::get<2>(answer) += "R";
-
-        return answer;
-    }
-    //characters are not matched inside the problem, and we must choose between a deletion in a
-    //a deletion in b, and a mismatch
+    //else, iterate between our possible cases
     else
     {
-        double mismatch_score = current_score + c;
-        std::string a_mismatched = a_matched + a[0];
-        std::string b_mismatched = b_matched + "R";
-        double deletion_score = current_score + d;
-        std::string a_deleted = a_matched + "_";
-        std::string b_deleted = b_matched + "_";
-        std::string a_not_deleted = a_matched + a[0];
-        std::string b_not_deleted = b_matched + b[0];
+        double match_score = std::get<0>(answer) + m;
+        double delete_score = std::get<0>(answer) + d;
+        double change_score = std::get<0>(answer) + d;
+        
+        std::string a_kept = std::get<1>(answer) + a[0];
+        std::string b_kept = std::get<2>(answer) + b[0];
+        std::string a_deleted = std::get<1>(answer) + "_";
+        std::string b_deleted = std::get<2>(answer) + "_";
+        std::string b_changed = std::get<2>(answer) + "R";
 
-        auto mismatch = matching_score(m,c,d,a.substr(1),b.substr(1),
-                                mismatch_score,a_mismatched,b_mismatched, worst_case);
-        auto delete_a = matching_score(m,c,d,a,b.substr(1),
-                                deletion_score,a_deleted,b_not_deleted, worst_case);
-        auto delete_b = matching_score(m,c,d,a.substr(1),b,
-                                deletion_score,a_not_deleted,b_deleted, worst_case);
-
-        double mismatch_branch_score = std::get<0>(mismatch);
-        double delete_a_score = std::get<0>(delete_a);
-        double delete_b_score = std::get<0>(delete_b);
-
-            
-        if( (mismatch_branch_score >= delete_a_score) && (mismatch_branch_score >= delete_b_score) )
+        double match_optimal = match_score + optimal_score(m, c, d, a.substr(1), b.substr(1));
+        double delete_a_optimal = delete_score + optimal_score(m, c, d, a, b.substr(1));
+        double delete_b_optimal = delete_score + optimal_score(m, c, d, a.substr(1), b);
+        double change_optimal = change_score + optimal_score(m, c, d, a.substr(1), b.substr(1));
+        
+        //match if a[0] == b[0]; change if a[0] != b[0]
+        //either case will be stored in match
+        std::tuple<double, std::string, std::string> match;
+        if( a[0] == b[0] )
         {
-            return mismatch;
+            match = matching_score(m,c,d,a.substr(1),b.substr(1),
+                                match_score,a_kept,b_kept,
+                                match_optimal,highest_score);
         }
         else
-        if( (delete_a_score >= mismatch_branch_score) && (delete_a_score >= delete_b_score) )
+        {
+            match = matching_score(m,c,d,a.substr(1),b.substr(1),
+                                change_score,a_kept,b_changed,
+                                change_optimal,highest_score);
+        }
+        
+        //deletion in a
+        auto delete_a = matching_score(m,c,d,a,b.substr(1),
+                                delete_score,a_deleted,b_kept,
+                                delete_a_optimal,highest_score);
+
+        //deletion in b
+        auto delete_b = matching_score(m,c,d,a.substr(1),b,
+                                delete_score,a_kept,b_deleted,
+                                delete_b_optimal,highest_score);
+        
+        //choose the branch with largest score
+        double match_final_score = std::get<0>(match);
+        double delete_a_final_score = std::get<0>(delete_a);
+        double delete_b_final_score = std::get<0>(delete_b);
+
+            
+        if( (match_final_score >= delete_a_final_score) && (match_final_score >= delete_b_final_score) )
+        {
+            return match;
+        }
+        else
+        if( (delete_a_final_score >= match_final_score) && (delete_a_final_score >= delete_b_final_score) )
         {
             return delete_a;
         }
@@ -153,28 +201,35 @@ int main(int argc, char *argv[])
     */
 
     //DEBUG VERSION OF DECLARATIONS FOR RUNNING OFF CSIL
-    double m = 2;
+    double m = 1.5;
     double c = -0.5;
     double d = -1;
-    std::string a = "ACACACTEEEEEEEACACTA";
-    std::string b = "AGCACACAAGCACACA";
+    std::string a = "ACACACTA";
+    std::string b = "AGCACACA";
+    //std::string a = "ACACACTAC";
+    //std::string b = "AGCACACAG";
+    //std::string a = "ACACACTEEEEEEEACACTA";
+    //std::string b = "AGCACACAAGCACACA";
     /*
     A=
         8.5
         A_CACACTA
         AGCACAC_A
     */
-    //to prevent very long branches
-    //it is best to assume a change across the two shared slots
-    //and then perform deletions with the bases left over
-    //then to perform too many deletions
-    //our worst-case score w is equal to the maximum number of changes,
-    //and the minimum number of deletions
-    double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
-    double max_changes = c * std::min( (int)a.length(), (int)b.length() );
-    double w = max_changes + min_deletions;
     
-    auto answer = matching_score(m, c, d, a, b, 0, "", "", w);
+    //the worst case will be inputted as our high score
+    double worst = worst_case_score(m, c, d, a, b);
+
+    //the best case will be compared to our high score
+    double best = optimal_score(m, c, d, a, b);
+    
+    cout << "&worst: " << &worst << "\n";
+    cout << " worst: " << worst << "\n";
+    //cout << "*worst: " << *worst << "\n";
+    cout << "\n";
+
+    
+    auto answer = matching_score(m, c, d, a, b, 0, "", "", best, &worst);
 
     cout << std::get<0>(answer) << "\n";
     cout << std::get<1>(answer) << "\n";
