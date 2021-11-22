@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
     //std::string b = "AGCACACA";
     //std::string a = "ACACACTAC";
     //std::string b = "AGCACACAG";
-    //std::string a = "ACACACTEEEEEEEACACTA";
-    //std::string b = "AGCACACAAGCACACA";
+    std::string a = "ACACACTEEEEEEEACACTA";
+    std::string b = "AGCACACAAGCACACA";
     /*
     A=
         8.5
