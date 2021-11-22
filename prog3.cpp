@@ -40,31 +40,34 @@ double optimal_score(double m, double c, double d, std::string a, std::string b)
 
 double worst_case_score(double m, double c, double d, std::string a, std::string b)
 {
-    //case #1: performing the max number of matches
+    //case #1: performing the max number of matches or changes
+    //(which one is the lowest)
     //and the minimum number of deletions
-    double max_matches = m * std::min( (int)a.length(), (int)b.length() );
+    double lowest_of_m_c = 0.0;
+    
+    if(m < c)
+        lowest_of_m_c = m;
+    else
+        lowest_of_m_c = c;
+    double max_matches = lowest_of_m_c * std::min( (int)a.length(), (int)b.length() );
     double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
-    double b1 = max_matches + min_deletions;
+    double w1 = max_matches + min_deletions;
     
-    //case #2: performing the max number of changes
-    //and the minimum number of deletions
-    double max_changes = c * std::min( (int)a.length(), (int)b.length() );
-    double b2 = max_changes + min_deletions;
+    //case #2: deleting every base of a from b and vice-versa
+    double w2 = d * ( (int)a.length() + (int)b.length() );
     
-    //case #3: deleting every base of a from b and vice-versa
-    double b3 = d * ( (int)a.length() + (int)b.length() );
-    
+    //offset the worst case by 0.1 * minimum of m,c,d
+    double offset = std::fmin( std::abs(m), std::abs(c));
+    offset = std::fmin(offset, std::abs(d));
+    offset = 0.1 * offset;
+
     //return the maximum of the cases
-    if(( b1 < b2 ) || ( b1 < b3 ))
-        return b1;
-    if(( b2 < b1 ) || ( b2 < b3 ))
-        return b2;
-    return b3;
+    return std::fmax(w1, w2) - offset;
 }
 
 std::tuple<double, std::string, std::string> matching_score(double m, double c, double d, std::string a, std::string b, 
                               double current_score, std::string a_matched, std::string b_matched, 
-                              double highest_possible_score, double * highest_score)
+                              double highest_possible_score, double *highest_score)
 {
     //the answer for the problem
     std::tuple<double, std::string, std::string> answer(current_score, a_matched, b_matched);
@@ -80,15 +83,24 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
     */
 
     //sub-optimal branch; will only be below worst-case score.  Stop here.
-    if( highest_possible_score < *highest_score )
+    if( highest_possible_score <= *highest_score )
     {
         return answer;
     }
     //end of sequence
     if( a.length() == 0 && b.length() == 0 )
     {
-        if(m > *highest_score )
-            *highest_score = m;
+        cout << std::get<1>(answer) << "\n";
+        cout << std::get<2>(answer) << "\n";
+
+        if(current_score > *highest_score )
+        {
+            *highest_score = current_score;
+        }
+        cout << " current_score:         " << current_score << "\n";
+        cout << " highest possible score:" << highest_possible_score << "\n";
+        cout << "*highest_score:         " << *highest_score << "\n";
+        cout << "\n";
         return answer;
     }
     //end of a; b is longer, and therefore rest of a was deleted
@@ -120,7 +132,7 @@ std::tuple<double, std::string, std::string> matching_score(double m, double c, 
     {
         double match_score = std::get<0>(answer) + m;
         double delete_score = std::get<0>(answer) + d;
-        double change_score = std::get<0>(answer) + d;
+        double change_score = std::get<0>(answer) + c;
         
         std::string a_kept = std::get<1>(answer) + a[0];
         std::string b_kept = std::get<2>(answer) + b[0];
@@ -201,15 +213,17 @@ int main(int argc, char *argv[])
     */
 
     //DEBUG VERSION OF DECLARATIONS FOR RUNNING OFF CSIL
-    double m = 1.5;
-    double c = -0.5;
-    double d = -1;
+    double m = 2;
+    double c = -0.2;
+    double d = -1.5;
     //std::string a = "ACACACTA";
     //std::string b = "AGCACACA";
     //std::string a = "ACACACTAC";
     //std::string b = "AGCACACAG";
-    std::string a = "ACACACTEEEEEEEACACTA";
-    std::string b = "AGCACACAAGCACACA";
+    //std::string a = "ACACACTEEEEEEEACACTA";
+    //std::string b = "AGCACACAAGCACACA";
+    std::string a = "ACATGAGACAGACAGACCCCCAGAGACAGACCCCTAGACACAGAGAGAGTATGCAGGACAGGGTTTTTGCCCAGGGTGGCAGTATG";
+    std::string b = "AGGATTGAGGTATGGGTATGTTCCCGATTGAGTAGCCAGTATGAGCCAGAGTTTTTTACAAGTATTTTTCCCAGTAGCCAGAGAGAGAGTCACCCAGTACAGAGAGC";
     /*
     A=
         8.5
@@ -222,12 +236,6 @@ int main(int argc, char *argv[])
 
     //the best case will be compared to our high score
     double best = optimal_score(m, c, d, a, b);
-    
-    cout << "&worst: " << &worst << "\n";
-    cout << " worst: " << worst << "\n";
-    //cout << "*worst: " << *worst << "\n";
-    cout << "\n";
-
     
     auto answer = matching_score(m, c, d, a, b, 0, "", "", best, &worst);
 
