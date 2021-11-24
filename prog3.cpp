@@ -243,12 +243,12 @@ int main(int argc, char *argv[])
                 d = std::stod(argv[i+1]);
             if(argv[i] = "-")
             {
-                getline(argv[i+1], a);//read data from file object and put it into string.
+                std::getline(argv[i+1], a);//read data from file object and put it into string.
                 //a = argv[i+1];
             }
             if(argv[i] = "-d")
             {
-                getline(argv[i+1], b);
+                std::getline(argv[i+1], b);
                 //b = argv[i+1];
             }
         }
