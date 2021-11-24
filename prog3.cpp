@@ -253,12 +253,14 @@ int main(int argc, char *argv[])
             {
                 while(getline(argv[i+1], tp))//read data from file object and put it into string.
                 {
-                a << tp;   //print the data of the string
+                b << tp;   //print the data of the string
                 }
                 //b = argv[i+1];
             }
         }
     }
+
+    cout << a << "\n" << b << "\n";
 
     double score = 0;
     std::string a_compared = "";
