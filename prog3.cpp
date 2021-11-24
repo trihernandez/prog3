@@ -238,15 +238,17 @@ int main(int argc, char *argv[])
     else {
         for( int i = 1; i<argc; i=i+2)
         {
-            if(argv[i] == "-m")
-                m = std::stod(argv[i+1]);
-            if(argv[i] == "-c")
-                c = std::stod(argv[i+1]);
-            if(argv[i] == "-d")
-                d = std::stod(argv[i+1]);
-            if(argv[i] == "-1")
+            std::string argv_i0 = argv[i];
+            std::string argv_i1 = argv[i+1];
+            if(argv_i0 == "-m")
+                m = std::stod(argv_i1);
+            if(argv_i0 == "-c")
+                c = std::stod(argv_i1);
+            if(argv_i0 == "-d")
+                d = std::stod(argv_i1);
+            if(argv_i0 == "-1")
             {
-                std::string filename_a = argv[i+1];
+                std::string filename_a = argv_i1;
                 filename_a = filename_a + ".txt";
                 ifstream file_a(filename_a);
                 a = std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{};
@@ -254,7 +256,7 @@ int main(int argc, char *argv[])
             }
             if(argv[i] == "-2")
             {
-                std::string filename_b = argv[i+1];
+                std::string filename_b = argv_i1;
                 filename_b = filename_b + ".txt";
                 ifstream file_b(filename_b);
                 b = std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{};
