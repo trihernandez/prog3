@@ -300,32 +300,29 @@ int main(int argc, char *argv[])
     int a_len = (int)a.length()+1;
     int b_len = (int)b.length()+1;
 
+int a_len = (int)a.length()+1;
+    int b_len = (int)b.length()+1;
+
     cout << "a_len:" << a_len << "\n";
     cout << "b_len:" << b_len << "\n";
 
     //keep track of the matching of letters
     //Node optimaility_table[a_len][b_len];
-    Node optimaility_table[a_len * b_len];
-
-    cout << "306\n";
+    Node * optimaility_table;
+    optimaility_table = new Node[a_len * b_len];
 
     for(int i = 0; i< a_len; i++ )
     {
-        cout << i;
         for(int j = 0; j< b_len; j++ )
         {
-            cout << i << "," << j << "\n";
             bool ij_match = false;
             if( i<(a_len-1) || i<(b_len-1) )
                 ij_match = a[i]==b[j];
-            Node n(i, j, ij_match, 0.0, "");
             //optimaility_table[i][j] = n;
-            optimaility_table[ position_2d(b_len, i, j) ] = n;
+            Node n(i, j, ij_match, 0.0, "");
+            optimaility_table[position_2d(b_len, i, j)] = n;
         }
     }
-    Node *opt_pointer;
-    //opt_pointer = optimaility_table[0];
-    opt_pointer = optimaility_table;
 
     //calculateNodeScore(m, c, d, a, b, 
     //              a_len, b_len, a_index, b_index,*opt_pointer)
@@ -339,14 +336,13 @@ int main(int argc, char *argv[])
             int j = ij_sum - i;
             if(i<a_len && j<b_len)
             {
-                cout << i << "," << j << "\n";
-                calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, opt_pointer);
+                calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, optimaility_table);
             }
         }
     }
 
-    cout << opt_pointer->score << "\n";
-    cout << decode_path(a,b,opt_pointer->path) << "\n";
+    cout << optimaility_table->score << "\n";
+    cout << decode_path(a,b,optimaility_table->path) << "\n";
 
     auto end = high_resolution_clock::now();
     auto total_runtime = duration_cast<microseconds>(end - start);
