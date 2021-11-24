@@ -243,17 +243,17 @@ int main(int argc, char *argv[])
                 d = std::stod(argv[i+1]);
             if(argv[i] = "-")
             {
-                while(getline(argv[i+1], tp))//read data from file object and put it into string.
+                while(getline(argv[i+1], a))//read data from file object and put it into string.
                 {
-                a << tp;   //print the data of the string
+                //a << a;   //print the data of the string
                 }
                 //a = argv[i+1];
             }
             if(argv[i] = "-d")
             {
-                while(getline(argv[i+1], tp))//read data from file object and put it into string.
+                while(getline(argv[i+1], b))//read data from file object and put it into string.
                 {
-                b << tp;   //print the data of the string
+                //b << b;   //print the data of the string
                 }
                 //b = argv[i+1];
             }
