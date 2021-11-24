@@ -343,8 +343,6 @@ int main(int argc, char *argv[])
     double runtime_in_seconds = (double)total_runtime.count() / 1000000.0;
 
     cout << "Runtime: " << runtime_in_seconds << " s\n";
-
-    delete optimaility_table;
     
     return 0;
 }
