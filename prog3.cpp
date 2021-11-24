@@ -248,11 +248,20 @@ int main(int argc, char *argv[])
             std::string argv_i0 = argv[i];
             std::string argv_i1 = argv[i+1];
             if((argv_i0 == "-m") && (m_read == false))
+            {
                 m = std::stod(argv_i1);
+                m_read = true;
+            }
             else if((argv_i0 == "-c") && (c_read == false))
+            {
                 c = std::stod(argv_i1);
+                c_read = true;
+            }
             else if((argv_i0 == "-d") && (d_read == false))
+            {
                 d = std::stod(argv_i1);
+                d_read = true;
+            }
             else if((argv_i0 == "-1") && (a_read == false))
             {
                 std::string filename_a = argv_i1;
@@ -260,6 +269,7 @@ int main(int argc, char *argv[])
                 ifstream file_a(filename_a);
                 a = { std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{} };
                 //taken from https://www.cplusplus.com/forum/beginner/151894/
+                a_read = true;
             }
             else if((argv_i0 == "-2") && (b_read == false))
             {
@@ -267,6 +277,7 @@ int main(int argc, char *argv[])
                 filename_b = filename_b + ".txt";
                 ifstream file_b(filename_b);
                 b = { std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{} };
+                b_read = true;
             }
             else
             {
