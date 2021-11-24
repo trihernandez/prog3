@@ -300,12 +300,6 @@ int main(int argc, char *argv[])
     int a_len = (int)a.length()+1;
     int b_len = (int)b.length()+1;
 
-int a_len = (int)a.length()+1;
-    int b_len = (int)b.length()+1;
-
-    cout << "a_len:" << a_len << "\n";
-    cout << "b_len:" << b_len << "\n";
-
     //keep track of the matching of letters
     //Node optimaility_table[a_len][b_len];
     Node * optimaility_table;
