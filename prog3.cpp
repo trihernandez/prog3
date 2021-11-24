@@ -306,6 +306,7 @@ int main(int argc, char *argv[])
     {
         for(int j = 0; j< b_len; j++ )
         {
+            cout << i << "," << j << "\n";
             bool ij_match = false;
             if( i<(a_len-1) || i<(b_len-1) )
                 ij_match = a[i]==b[j];
