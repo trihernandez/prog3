@@ -304,7 +304,8 @@ int main(int argc, char *argv[])
     cout << "b_len:" << b_len << "\n";
 
     //keep track of the matching of letters
-    Node optimaility_table[a_len][b_len];
+    //Node optimaility_table[a_len][b_len];
+    Node optimaility_table[a_len * b_len];
 
     cout << "306\n";
 
@@ -318,11 +319,13 @@ int main(int argc, char *argv[])
             if( i<(a_len-1) || i<(b_len-1) )
                 ij_match = a[i]==b[j];
             Node n(i, j, ij_match, 0.0, "");
-            optimaility_table[i][j] = n;
+            //optimaility_table[i][j] = n;
+            optimaility_table[ position_2d(b_len, i, j) ] = n;
         }
     }
     Node *opt_pointer;
-    opt_pointer = optimaility_table[0];
+    //opt_pointer = optimaility_table[0];
+    opt_pointer = optimaility_table;
 
     //calculateNodeScore(m, c, d, a, b, 
     //              a_len, b_len, a_index, b_index,*opt_pointer)
