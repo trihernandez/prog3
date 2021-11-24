@@ -225,6 +225,13 @@ int main(int argc, char *argv[])
     std::string a = "";
     std::string b = "";
 
+    bool m_read = false;
+    bool c_read = false;
+    bool d_read = false;
+    bool a_read = false;
+    bool a_read = false;
+
+
     if (argc > 11 || argc < 5)
     {
         std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
@@ -240,13 +247,13 @@ int main(int argc, char *argv[])
         {
             std::string argv_i0 = argv[i];
             std::string argv_i1 = argv[i+1];
-            if(argv_i0 == "-m")
+            if((argv_i0 == "-m") && (m_read == false))
                 m = std::stod(argv_i1);
-            if(argv_i0 == "-c")
+            else if((argv_i0 == "-c") && (c_read == false))
                 c = std::stod(argv_i1);
-            if(argv_i0 == "-d")
+            else if((argv_i0 == "-d") && (d_read == false))
                 d = std::stod(argv_i1);
-            if(argv_i0 == "-1")
+            else if((argv_i0 == "-1") && (a_read == false))
             {
                 std::string filename_a = argv_i1;
                 filename_a = filename_a + ".txt";
@@ -254,22 +261,25 @@ int main(int argc, char *argv[])
                 a = { std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{} };
                 //taken from https://www.cplusplus.com/forum/beginner/151894/
             }
-            if(argv_i0 == "-2")
+            else if((argv_i0 == "-2") && (b_read == false))
             {
                 std::string filename_b = argv_i1;
                 filename_b = filename_b + ".txt";
                 ifstream file_b(filename_b);
                 b = { std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{} };
             }
+            else
+            {
+                std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
+                return 1;
+            }
         }
     }
-
-    cout << "m: " << m << "\n";
-    cout << "c: " << c << "\n";
-    cout << "d: " << d << "\n";
-
-    cout << a << "\n" << b << "\n";
-    cout << a << "\n" << b << "\n";
+    if(( a_read == false ) || ( b_read == false ) )
+    {
+        std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
+        return 1;
+    }
 
     double score = 0;
     std::string a_compared = "";
