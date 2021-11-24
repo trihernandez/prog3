@@ -328,6 +328,7 @@ int main(int argc, char *argv[])
             int j = ij_sum - i;
             if(i<a_len && j<b_len)
             {
+                cout << i << "," << j << "\n";
                 calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, opt_pointer);
             }
         }
