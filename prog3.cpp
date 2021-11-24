@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 #include <cfloat>
+#include <fstream>
 #include <algorithm>    // std::sort
 //#include <time.h>       // to get the runtime for inputs
 
@@ -13,185 +14,200 @@ using namespace std;
 #include <chrono>       // to get the runtime for inputs. Taken from https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
 using namespace std::chrono;
 
-
-double optimal_score(double m, double c, double d, std::string a, std::string b)
+int position_2d(int width, int i, int j)
 {
-    //case #1: performing the max number of matches
-    //and the minimum number of deletions
-    double max_matches = m * std::min( (int)a.length(), (int)b.length() );
-    double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
-    double b1 = max_matches + min_deletions;
-    
-    //case #2: performing the max number of changes
-    //and the minimum number of deletions
-    double max_changes = c * std::min( (int)a.length(), (int)b.length() );
-    double b2 = max_changes + min_deletions;
-    
-    //case #3: deleting every base of a from b and vice-versa
-    double b3 = d * ( (int)a.length() + (int)b.length() );
-    
-    //return the maximum of the cases
-    if(( b1 > b2 ) && ( b1 > b3 ))
-        return b1;
-    if(( b2 > b1 ) && ( b2 > b3 ))
-        return b2;
-    return b3;
+    return (i*width)+j;
 }
 
-double worst_case_score(double m, double c, double d, std::string a, std::string b)
+std::string decode_path(std::string a, std::string b, std::string path)
 {
-    //case #1: performing the max number of matches or changes
-    //(which one is the lowest)
-    //and the minimum number of deletions
-    double lowest_of_m_c = 0.0;
-    
-    if(m < c)
-        lowest_of_m_c = m;
-    else
-        lowest_of_m_c = c;
-    double max_matches = lowest_of_m_c * std::min( (int)a.length(), (int)b.length() );
-    double min_deletions = d * std::abs( (int)a.length() - (int)b.length() );
-    double w1 = max_matches + min_deletions;
-    
-    //case #2: deleting every base of a from b and vice-versa
-    double w2 = d * ( (int)a.length() + (int)b.length() );
-    
-    //offset the worst case by 0.1 * minimum of m,c,d
-    double offset = std::fmin( std::abs(m), std::abs(c));
-    offset = std::fmin(offset, std::abs(d));
-    offset = 0.1 * offset;
+    int a_index = 0;
+    int b_index = 0;
+    std::string a_output = "";
+    std::string b_output = "";
+    std::string current_path = path;
 
-    //return the maximum of the cases
-    return std::fmax(w1, w2) - offset;
-}
-
-std::tuple<double, std::string, std::string> matching_score(double m, double c, double d, std::string a, std::string b, 
-                              double current_score, std::string a_matched, std::string b_matched, 
-                              double highest_possible_score, double *highest_score)
-{
-    //the answer for the problem
-    std::tuple<double, std::string, std::string> answer(current_score, a_matched, b_matched);
-
-    /*
-    cout << std::get<1>(answer) << "\n";
-    cout << std::get<2>(answer) << "\n";
-    cout << " current score:         " <<std::get<0>(answer) << "\n";
-    cout << " highest possible score:" << highest_possible_score << "\n";
-    cout << "*highest_score:         " << *highest_score << "\n";
-    cout << " highest_score:         " << highest_score << "\n";
-    cout << "\n";
-    */
-
-    //sub-optimal branch; will only be below worst-case score.  Stop here.
-    if( highest_possible_score <= *highest_score )
+    while(current_path.length() > 0)
     {
-        return answer;
-    }
-    //end of sequence
-    if( a.length() == 0 && b.length() == 0 )
-    {
-        cout << std::get<1>(answer) << "\n";
-        cout << std::get<2>(answer) << "\n";
-
-        if(current_score > *highest_score )
+        if(current_path.at(0) == 'm')
         {
-            *highest_score = current_score;
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + b.at(b_index);
+            a_index++;
+            b_index++;
         }
-        cout << " current_score:         " << current_score << "\n";
-        cout << " highest possible score:" << highest_possible_score << "\n";
-        cout << "*highest_score:         " << *highest_score << "\n";
-        cout << "\n";
-        return answer;
-    }
-    //end of a; b is longer, and therefore rest of a was deleted
-    else if( a.length() == 0 )
-    {
-        std::get<0>(answer) += d;
-        std::get<1>(answer) += "_";
-        std::get<2>(answer) += b[0];
-        double optimal = std::get<0>(answer) + optimal_score(m, c, d, a, b.substr(1));
-
-        return matching_score(m,c,d,a,b.substr(1),
-                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer),
-                                optimal,highest_score);
-    }
-    //end of b; a is longer, and therefore rest of b was deleted
-    else if( b.length() == 0 )
-    {
-        std::get<0>(answer) += d;
-        std::get<1>(answer) += a[0];
-        std::get<2>(answer) += "_";
-        double optimal = std::get<0>(answer) + optimal_score(m, c, d, a.substr(1), b);
-
-        return matching_score(m,c,d,a.substr(1),b,
-                                std::get<0>(answer),std::get<1>(answer),std::get<2>(answer),
-                                optimal,highest_score);
-    }
-    //else, iterate between our possible cases
-    else
-    {
-        double match_score = std::get<0>(answer) + m;
-        double delete_score = std::get<0>(answer) + d;
-        double change_score = std::get<0>(answer) + c;
-        
-        std::string a_kept = std::get<1>(answer) + a[0];
-        std::string b_kept = std::get<2>(answer) + b[0];
-        std::string a_deleted = std::get<1>(answer) + "_";
-        std::string b_deleted = std::get<2>(answer) + "_";
-        std::string b_changed = std::get<2>(answer) + "R";
-
-        double match_optimal = match_score + optimal_score(m, c, d, a.substr(1), b.substr(1));
-        double delete_a_optimal = delete_score + optimal_score(m, c, d, a, b.substr(1));
-        double delete_b_optimal = delete_score + optimal_score(m, c, d, a.substr(1), b);
-        double change_optimal = change_score + optimal_score(m, c, d, a.substr(1), b.substr(1));
-        
-        //match if a[0] == b[0]; change if a[0] != b[0]
-        //either case will be stored in match
-        std::tuple<double, std::string, std::string> match;
-        if( a[0] == b[0] )
+        if(current_path.at(0) == 'c')
         {
-            match = matching_score(m,c,d,a.substr(1),b.substr(1),
-                                match_score,a_kept,b_kept,
-                                match_optimal,highest_score);
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + "R";
+            a_index++;
+            b_index++;
+        }
+        if(current_path.at(0) == 'a')
+        {
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + "_";
+            a_index++;
+        }
+        if(current_path.at(0) == 'b')
+        {
+            a_output = a_output + "_";
+            b_output = b_output + b.at(b_index);
+            b_index++;
+        }
+        current_path = current_path.substr(1);
+    }
+    
+    std::string answer = a_output + "\n" + b_output;
+    return answer;
+}
+
+
+
+
+
+
+
+
+
+class Node
+{
+    public:
+
+    //index along a
+    int a_index;
+    //index along b
+    int b_index;
+    //do the bases at a and b match?
+    bool match;
+    //Optimal score for this node
+    double score;
+    //optimal path to take to this node
+    //  'a' = deleting b
+    //  'b' = deleting a
+    //  'c' = change
+    //  'm' = match
+    std::string path;
+    
+    Node()
+    {
+        a_index = -1;
+        b_index = -1;
+        match = false;
+        score = 0.0;
+        path = "";
+    }
+
+    Node(int a_ind, int b_ind, bool match_bool, double s, std::string p)
+    {
+        a_index = a_ind;
+        b_index = b_ind;
+        match = match_bool;
+        score = s;
+        path = p;
+    }
+};
+
+
+
+
+
+
+
+
+
+void calculateNodeScore (double m, double c, double d, std::string a, std::string b,
+                        int a_len, int b_len, int a_index, int b_index, Node * table)
+{
+    //if the node lies within the table, and we still have remaining bases in a and b
+    if( (a_index < a_len-1) && (b_index < b_len-1) && (a_index >= 0) && (b_index >=0 ) )
+    {
+        Node * currentNode = (table + position_2d(b_len, a_index, b_index));
+
+        double match_score = 0.0;
+        double delete_a_score = 0.0;
+        double delete_b_score = 0.0;
+        
+        std::string match_path = "";
+        std::string delete_a_path = "";
+        std::string delete_b_path = "";
+            
+        //match or mismatch
+        Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
+        if( currentNode->match == true )
+        {
+            match_score = m + matchNode->score;
+            match_path = "m" + matchNode->path;
         }
         else
         {
-            match = matching_score(m,c,d,a.substr(1),b.substr(1),
-                                change_score,a_kept,b_changed,
-                                change_optimal,highest_score);
+            match_score = c + matchNode->score;
+            match_path = "c" + matchNode->path;
         }
-        
-        //deletion in a
-        auto delete_a = matching_score(m,c,d,a,b.substr(1),
-                                delete_score,a_deleted,b_kept,
-                                delete_a_optimal,highest_score);
-
-        //deletion in b
-        auto delete_b = matching_score(m,c,d,a.substr(1),b,
-                                delete_score,a_kept,b_deleted,
-                                delete_b_optimal,highest_score);
-        
-        //choose the branch with largest score
-        double match_final_score = std::get<0>(match);
-        double delete_a_final_score = std::get<0>(delete_a);
-        double delete_b_final_score = std::get<0>(delete_b);
+            
+        //delete a; increase b and keep a
+        Node * deleteANode = (table + position_2d(b_len, a_index, b_index+1));
+        delete_a_score = d + deleteANode->score;
+        delete_a_path = "b" + deleteANode->path;
+            
+        //delete b; increase a and keep b
+        Node * deleteBNode = (table + position_2d(b_len, a_index+1, b_index));
+        delete_b_score = d + deleteBNode->score;
+        delete_b_path = "a" + deleteBNode->path;
 
             
-        if( (match_final_score >= delete_a_final_score) && (match_final_score >= delete_b_final_score) )
+        //calculate max scores
+        double best_score = delete_b_score;
+        std::string best_path = delete_b_path;
+        if(delete_a_score > best_score)
         {
-            return match;
+            best_score = delete_a_score;
+            best_path = delete_a_path;
         }
-        else
-        if( (delete_a_final_score >= match_final_score) && (delete_a_final_score >= delete_b_final_score) )
+        if(match_score > best_score)
         {
-            return delete_a;
+            best_score = match_score;
+            best_path = match_path;
         }
-        else
-        {
-            return delete_b;
-        }
+
+        currentNode->score = best_score;
+        currentNode->path = best_path;
+    }
+    //otherwise, if we have no bases left in either A or B
+    //Adding these else statements because there was a bug in an earlier version code where
+    //  these values were incorrectly calculated, throwing off the entire table
+    //But we know at this part of the table, we can only perform deletions
+    else if( (a_index == a_len-1) && (b_index == b_len-1) )
+    {
+        //we have no more moves left;
+        //do not alter the table
+        return;
+    }
+    else if(a_index == a_len-1)
+    {
+        //we have no bases left in b
+        //we must delete a
+        Node * currentNode = (table + position_2d(b_len, a_index, b_index));
+        Node * nextNode = (table + position_2d(b_len, a_index, b_index+1));
+        currentNode->score = d + nextNode->score;
+        currentNode->path = "b" + nextNode->path;
+    }
+    else if(b_index == b_len-1)
+    {
+        //we have no bases left in a
+        //we must delete b
+        Node * currentNode = (table + position_2d(b_len, a_index, b_index));
+        Node * nextNode = (table + position_2d(b_len, a_index+1, b_index));
+        currentNode->score = d + nextNode->score;
+        currentNode->path = "a" + nextNode->path;
     }
 }
+
+
+
+
+
+
 
 
 
@@ -200,48 +216,93 @@ int main(int argc, char *argv[])
     //obtain the coordinates of all points as a pair
     auto start = high_resolution_clock::now();
 
+    double m = 2.0;
+    double c = -0.5;
+    double d = -1.0;
+    std::string a = "";
+    std::string b = "";
+
+    if (argc > 11 || argc < 5)
+    {
+        std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
+        return 1;
+    }
+    else if (argc%2 == 0)
+    {
+        std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
+        return 1;
+    }
+    else {
+        for( int i = 1; i<argc; i=i+2)
+        {
+            if(argv[i] = "-m")
+                m = std::stod(argv[i+1]);
+            if(argv[i] = "-c")
+                c = std::stod(argv[i+1]);
+            if(argv[i] = "-d")
+                d = std::stod(argv[i+1]);
+            if(argv[i] = "-")
+            {
+                while(getline(argv[i+1], tp))//read data from file object and put it into string.
+                {
+                a << tp;   //print the data of the string
+                }
+                //a = argv[i+1];
+            }
+            if(argv[i] = "-d")
+            {
+                while(getline(argv[i+1], tp))//read data from file object and put it into string.
+                {
+                a << tp;   //print the data of the string
+                }
+                //b = argv[i+1];
+            }
+        }
+    }
+
     double score = 0;
     std::string a_compared = "";
     std::string b_compared = "";
 
-    /*
-    double m = std::stod(argv[1]);
-    double c = std::stod(argv[2]);
-    double d = std::stod(argv[3]);
-    std::string a = argv[4];
-    std::string b = argv[5];
-    */
+    //lengths for a and b
+    int a_len = (int)a.length()+1;
+    int b_len = (int)b.length()+1;
 
-    //DEBUG VERSION OF DECLARATIONS FOR RUNNING OFF CSIL
-    double m = 2;
-    double c = -0.2;
-    double d = -1.5;
-    //std::string a = "ACACACTA";
-    //std::string b = "AGCACACA";
-    //std::string a = "ACACACTAC";
-    //std::string b = "AGCACACAG";
-    //std::string a = "ACACACTEEEEEEEACACTA";
-    //std::string b = "AGCACACAAGCACACA";
-    std::string a = "ACATGAGACAGACAGACCCCCAGAGACAGACCCCTAGACACAGAGAGAGTATGCAGGACAGGGTTTTTGCCCAGGGTGGCAGTATG";
-    std::string b = "AGGATTGAGGTATGGGTATGTTCCCGATTGAGTAGCCAGTATGAGCCAGAGTTTTTTACAAGTATTTTTCCCAGTAGCCAGAGAGAGAGTCACCCAGTACAGAGAGC";
-    /*
-    A=
-        8.5
-        A_CACACTA
-        AGCACAC_A
-    */
-    
-    //the worst case will be inputted as our high score
-    double worst = worst_case_score(m, c, d, a, b);
+    //keep track of the matching of letters
+    Node optimaility_table[a_len][b_len];
+    for(int i = 0; i< a_len; i++ )
+    {
+        for(int j = 0; j< b_len; j++ )
+        {
+            bool ij_match = false;
+            if( i<(a_len-1) || i<(b_len-1) )
+                ij_match = a[i]==b[j];
+            Node n(i, j, ij_match, 0.0, "");
+            optimaility_table[i][j] = n;
+        }
+    }
+    Node *opt_pointer;
+    opt_pointer = optimaility_table[0];
 
-    //the best case will be compared to our high score
-    double best = optimal_score(m, c, d, a, b);
-    
-    auto answer = matching_score(m, c, d, a, b, 0, "", "", best, &worst);
+    //calculateNodeScore(m, c, d, a, b, 
+    //              a_len, b_len, a_index, b_index,*opt_pointer)
+    //calculate scores and paths of node on the tree
+    //starting with lower left and approaching in a staircase manner;
+    int algorithm_start = (a_len-1) + (b_len-1);
+    for(int ij_sum = algorithm_start; ij_sum>=0; ij_sum--)
+    {
+        for(int i = 0; i<= ij_sum; i++)
+        {
+            int j = ij_sum - i;
+            if(i<a_len && j<b_len)
+            {
+                calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, opt_pointer);
+            }
+        }
+    }
 
-    cout << std::get<0>(answer) << "\n";
-    cout << std::get<1>(answer) << "\n";
-    cout << std::get<2>(answer) << "\n";
+    cout << opt_pointer->score << "\n";
+    cout << decode_path(a,b,opt_pointer->path) << "\n";
 
     auto end = high_resolution_clock::now();
     auto total_runtime = duration_cast<microseconds>(end - start);
