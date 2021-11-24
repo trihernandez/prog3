@@ -238,13 +238,13 @@ int main(int argc, char *argv[])
     else {
         for( int i = 1; i<argc; i=i+2)
         {
-            if(argv[i] = "-m")
+            if(argv[i] == "-m")
                 m = std::stod(argv[i+1]);
-            if(argv[i] = "-c")
+            if(argv[i] == "-c")
                 c = std::stod(argv[i+1]);
-            if(argv[i] = "-d")
+            if(argv[i] == "-d")
                 d = std::stod(argv[i+1]);
-            if(argv[i] = "-")
+            if(argv[i] == "-1")
             {
                 std::string filename_a = argv[i+1];
                 filename_a = filename_a + ".txt";
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
                 a = std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{};
                 //taken from https://www.cplusplus.com/forum/beginner/151894/
             }
-            if(argv[i] = "-d")
+            if(argv[i] == "-2")
             {
                 std::string filename_b = argv[i+1];
                 filename_b = filename_b + ".txt";
