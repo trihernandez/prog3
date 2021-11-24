@@ -264,6 +264,11 @@ int main(int argc, char *argv[])
         }
     }
 
+    cout << "m: " << m << "\n";
+    cout << "c: " << c << "\n";
+    cout << "d: " << d << "\n";
+
+    cout << a << "\n" << b << "\n";
     cout << a << "\n" << b << "\n";
 
     double score = 0;
