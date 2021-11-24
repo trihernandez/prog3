@@ -292,6 +292,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    cout << "295\n";
+
     double score = 0;
     std::string a_compared = "";
     std::string b_compared = "";
