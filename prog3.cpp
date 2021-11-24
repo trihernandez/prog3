@@ -1,11 +1,11 @@
 #include <utility>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <string>
 #include <cmath>
 #include <cfloat>
-#include <fstream>
 #include <algorithm>    // std::sort
 //#include <time.h>       // to get the runtime for inputs
 
@@ -243,18 +243,12 @@ int main(int argc, char *argv[])
                 d = std::stod(argv[i+1]);
             if(argv[i] = "-")
             {
-                while(getline(argv[i+1], a))//read data from file object and put it into string.
-                {
-                //a << a;   //print the data of the string
-                }
+                getline(argv[i+1], a);//read data from file object and put it into string.
                 //a = argv[i+1];
             }
             if(argv[i] = "-d")
             {
-                while(getline(argv[i+1], b))//read data from file object and put it into string.
-                {
-                //b << b;   //print the data of the string
-                }
+                getline(argv[i+1], b);
                 //b = argv[i+1];
             }
         }
