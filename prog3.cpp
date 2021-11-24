@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
     bool c_read = false;
     bool d_read = false;
     bool a_read = false;
-    bool a_read = false;
+    bool b_read = false;
 
 
     if (argc > 11 || argc < 5)
