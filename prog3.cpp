@@ -243,12 +243,16 @@ int main(int argc, char *argv[])
                 d = std::stod(argv[i+1]);
             if(argv[i] = "-")
             {
-                ifstream file_a(argv[i+1] + ".txt");
+                std::string filename_a = argv[i+1];
+                filename_a = filename_a + ".txt";
+                ifstream file_a(filename_a);
                 a = std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{};
             }
             if(argv[i] = "-d")
             {
-                ifstream file_b(argv[i+1] + ".txt");
+                std::string filename_b = argv[i+1];
+                filename_b = filename_b + ".txt";
+                ifstream file_b(filename_b);
                 b = std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{};
 
             }
