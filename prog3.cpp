@@ -292,8 +292,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    cout << "295\n";
-
     double score = 0;
     std::string a_compared = "";
     std::string b_compared = "";
@@ -302,16 +300,17 @@ int main(int argc, char *argv[])
     int a_len = (int)a.length()+1;
     int b_len = (int)b.length()+1;
 
-    cout << "305\n";
-
     //keep track of the matching of letters
     Node optimaility_table[a_len][b_len];
+
+    cout << "306\n";
+
     for(int i = 0; i< a_len; i++ )
     {
         cout << i;
         for(int j = 0; j< b_len; j++ )
         {
-            cout << "," << j << "\n";
+            cout << i << "," << j << "\n";
             bool ij_match = false;
             if( i<(a_len-1) || i<(b_len-1) )
                 ij_match = a[i]==b[j];
