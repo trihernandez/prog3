@@ -243,13 +243,14 @@ int main(int argc, char *argv[])
                 d = std::stod(argv[i+1]);
             if(argv[i] = "-")
             {
-                std::getline(argv[i+1], a);//read data from file object and put it into string.
-                //a = argv[i+1];
+                ifstream file_a(argv[i+1] + ".txt");
+                a = std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{};
             }
             if(argv[i] = "-d")
             {
-                std::getline(argv[i+1], b);
-                //b = argv[i+1];
+                ifstream file_b(argv[i+1] + ".txt");
+                b = std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{};
+
             }
         }
     }
