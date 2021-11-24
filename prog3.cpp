@@ -6,7 +6,10 @@
 #include <string>
 #include <cmath>
 #include <cfloat>
-#include <algorithm>    // std::sort
+#include <fstream>
+#include <iterator>
+#include <sstream>
+#include <algorithm>
 //#include <time.h>       // to get the runtime for inputs
 
 using namespace std;
@@ -247,6 +250,7 @@ int main(int argc, char *argv[])
                 filename_a = filename_a + ".txt";
                 ifstream file_a(filename_a);
                 a = std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{};
+                //taken from https://www.cplusplus.com/forum/beginner/151894/
             }
             if(argv[i] = "-d")
             {
@@ -254,7 +258,6 @@ int main(int argc, char *argv[])
                 filename_b = filename_b + ".txt";
                 ifstream file_b(filename_b);
                 b = std::istreambuf_iterator<char>(file_b), std::istreambuf_iterator<char>{};
-
             }
         }
     }
