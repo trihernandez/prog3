@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
                 a = { std::istreambuf_iterator<char>(file_a), std::istreambuf_iterator<char>{} };
                 //taken from https://www.cplusplus.com/forum/beginner/151894/
             }
-            if(argv[i] == "-2")
+            if(argv_i0 == "-2")
             {
                 std::string filename_b = argv_i1;
                 filename_b = filename_b + ".txt";
