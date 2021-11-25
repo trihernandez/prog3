@@ -178,7 +178,7 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         currentNode->path = best_path;
 
         //we can delete data at matchNode, as we will no longer need it.
-        delete (table + position_2d(b_len, a_index+1, b_index+1);
+        delete (table + position_2d(b_len, a_index+1, b_index+1));
     }
     //otherwise, if we have no bases left in either A or B
     //Adding these else statements because there was a bug in an earlier version code where
