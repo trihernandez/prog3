@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
     for(int ij_sum = algorithm_start; ij_sum>=0; ij_sum--)
     {
         cout << ij_sum << "\n";
-        int i_start = 0
+        int i_start = 0;
         int j_start = ij_sum - i_start;
         if(j >= b_len)
         {
