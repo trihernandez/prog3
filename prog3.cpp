@@ -322,8 +322,6 @@ int main(int argc, char *argv[])
     //              a_len, b_len, a_index, b_index,*opt_pointer)
     //calculate scores and paths of node on the tree
     //starting with lower left and approaching in a staircase manner;
-    cout << 325 << "\n";
-
     int algorithm_start = (a_len-1) + (b_len-1);
     for(int ij_sum = algorithm_start; ij_sum>=0; ij_sum--)
     {
@@ -331,6 +329,11 @@ int main(int argc, char *argv[])
         for(int i = 0; ((i<= ij_sum) && (i<a_len)); i++)
         {
             int j = ij_sum - i;
+            if(j >= b_len)
+            {
+                j = b_len;
+                i = ij_sum - j;
+            }
             if(i<a_len && j<b_len)
             {
                 calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, optimaility_table);
