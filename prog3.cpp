@@ -90,28 +90,23 @@ std::string decode_path(std::string a, std::string b, int a_len, int b_len, Node
             a_index++;
             b_index++;
         }
-        else if(currentNode.path == 'c')
+        if(currentNode.path == 'c')
         {
             a_output = a_output + a.at(a_index);
             b_output = b_output + "R";
             a_index++;
             b_index++;
         }
-        else if(currentNode.path == 'a')
+        if(currentNode.path == 'a')
         {
             a_output = a_output + a.at(a_index);
             b_output = b_output + "_";
             a_index++;
         }
-        else if(currentNode.path == 'b')
+        if(currentNode.path == 'b')
         {
             a_output = a_output + "_";
             b_output = b_output + b.at(b_index);
-            b_index++;
-        }
-        else
-        {
-            a_index++;
             b_index++;
         }
     }
@@ -150,7 +145,7 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         else
         {
             match_score = c + matchNode.score;
-            char match_path = 'c';
+            match_path = 'c';
         }
             
         //delete a; increase b and keep a
@@ -228,6 +223,7 @@ int main(int argc, char *argv[])
     std::string a = "";
     std::string b = "";
 
+    /*
     bool m_read = false;
     bool c_read = false;
     bool d_read = false;
@@ -293,6 +289,7 @@ int main(int argc, char *argv[])
         std::cerr << "Usage: " << argv[0] << "-m m(o) -c c(o) -d d(o) -1 seq1 -2 seq2" << std::endl;
         return 1;
     }
+    */
 
     double score = 0;
     std::string a_compared = "";
@@ -319,7 +316,7 @@ int main(int argc, char *argv[])
             optimaility_table[position_2d(b_len, i, j)] = n;
         }
     }
-    
+
     //calculateNodeScore(m, c, d, a, b, 
     //              a_len, b_len, a_index, b_index,*opt_pointer)
     //calculate scores and paths of node on the tree
