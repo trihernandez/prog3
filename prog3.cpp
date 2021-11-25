@@ -136,7 +136,8 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         std::string delete_b_path = "";
             
         //match or mismatch
-        Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
+        //Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
+        Node matchNode = &(table + position_2d(b_len, a_index+1, b_index+1));
         if( currentNode->match == true )
         {
             match_score = m + matchNode->score;
@@ -149,12 +150,14 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         }
             
         //delete a; increase b and keep a
-        Node * deleteANode = (table + position_2d(b_len, a_index, b_index+1));
+        //Node * deleteANode = (table + position_2d(b_len, a_index, b_index+1));
+        Node deleteANode = &(table + position_2d(b_len, a_index, b_index+1));
         delete_a_score = d + deleteANode->score;
         delete_a_path = "b" + deleteANode->path;
             
         //delete b; increase a and keep b
-        Node * deleteBNode = (table + position_2d(b_len, a_index+1, b_index));
+        //Node * deleteBNode = (table + position_2d(b_len, a_index+1, b_index));
+        Node deleteBNode = &(table + position_2d(b_len, a_index+1, b_index));
         delete_b_score = d + deleteBNode->score;
         delete_b_path = "a" + deleteBNode->path;
 
@@ -175,8 +178,6 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
 
         currentNode->score = best_score;
         currentNode->path = best_path;
-
-        delete currentNode;
     }
     //otherwise, if we have no bases left in either A or B
     //Adding these else statements because there was a bug in an earlier version code where
@@ -196,9 +197,6 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         Node * nextNode = (table + position_2d(b_len, a_index, b_index+1));
         currentNode->score = d + nextNode->score;
         currentNode->path = "b" + nextNode->path;
-
-        delete currentNode;
-        delete nextNode;
     }
     else if(b_index == b_len-1)
     {
@@ -208,9 +206,6 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         Node * nextNode = (table + position_2d(b_len, a_index+1, b_index));
         currentNode->score = d + nextNode->score;
         currentNode->path = "a" + nextNode->path;
-
-        delete currentNode;
-        delete nextNode;
     }
 }
 
