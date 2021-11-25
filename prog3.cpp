@@ -322,6 +322,8 @@ int main(int argc, char *argv[])
     //              a_len, b_len, a_index, b_index,*opt_pointer)
     //calculate scores and paths of node on the tree
     //starting with lower left and approaching in a staircase manner;
+    cout << 325 << "\n";
+
     int algorithm_start = (a_len-1) + (b_len-1);
     for(int ij_sum = algorithm_start; ij_sum>=0; ij_sum--)
     {
