@@ -138,7 +138,7 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         //match or mismatch
         //Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
         Node matchNode = *(table + position_2d(b_len, a_index+1, b_index+1));
-        if( currentNode.match == true )
+        if( currentNode->match == true )
         {
             match_score = m + matchNode.score;
             match_path = "m" + matchNode.path;
