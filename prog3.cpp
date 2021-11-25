@@ -17,57 +17,14 @@ using namespace std;
 #include <chrono>       // to get the runtime for inputs. Taken from https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
 using namespace std::chrono;
 
+
+
+
+
 int position_2d(int width, int i, int j)
 {
     return (i*width)+j;
 }
-
-std::string decode_path(std::string a, std::string b, std::string path)
-{
-    int a_index = 0;
-    int b_index = 0;
-    std::string a_output = "";
-    std::string b_output = "";
-    std::string current_path = path;
-
-    while(current_path.length() > 0)
-    {
-        if(current_path.at(0) == 'm')
-        {
-            a_output = a_output + a.at(a_index);
-            b_output = b_output + b.at(b_index);
-            a_index++;
-            b_index++;
-        }
-        if(current_path.at(0) == 'c')
-        {
-            a_output = a_output + a.at(a_index);
-            b_output = b_output + "R";
-            a_index++;
-            b_index++;
-        }
-        if(current_path.at(0) == 'a')
-        {
-            a_output = a_output + a.at(a_index);
-            b_output = b_output + "_";
-            a_index++;
-        }
-        if(current_path.at(0) == 'b')
-        {
-            a_output = a_output + "_";
-            b_output = b_output + b.at(b_index);
-            b_index++;
-        }
-        current_path = current_path.substr(1);
-    }
-    
-    std::string answer = a_output + "\n" + b_output;
-    return answer;
-}
-
-
-
-
 
 
 
@@ -90,7 +47,7 @@ class Node
     //  'b' = deleting a
     //  'c' = change
     //  'm' = match
-    std::string path;
+    char path;
     
     Node()
     {
@@ -98,10 +55,10 @@ class Node
         b_index = -1;
         match = false;
         score = 0.0;
-        path = "";
+        path = 'x';
     }
 
-    Node(int a_ind, int b_ind, bool match_bool, double s, std::string p)
+    Node(int a_ind, int b_ind, bool match_bool, double s, char p)
     {
         a_index = a_ind;
         b_index = b_ind;
@@ -113,6 +70,55 @@ class Node
 
 
 
+
+
+std::string decode_path(std::string a, std::string b, int a_len, int b_len, Node * table)
+{
+    int a_index = 0;
+    int b_index = 0;
+    std::string a_output = "";
+    std::string b_output = "";
+    Node currentNode = *(table + position_2d(b_len, a_index, b_index));
+
+    while((a_index < a_len) && (b_index < b_len))
+    {
+        currentNode = *(table + position_2d(b_len, a_index, b_index));
+        if(currentNode.path == 'm')
+        {
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + b.at(b_index);
+            a_index++;
+            b_index++;
+        }
+        else if(currentNode.path == 'c')
+        {
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + "R";
+            a_index++;
+            b_index++;
+        }
+        else if(currentNode.path == 'a')
+        {
+            a_output = a_output + a.at(a_index);
+            b_output = b_output + "_";
+            a_index++;
+        }
+        else if(currentNode.path == 'b')
+        {
+            a_output = a_output + "_";
+            b_output = b_output + b.at(b_index);
+            b_index++;
+        }
+        else
+        {
+            a_index++;
+            b_index++;
+        }
+    }
+    
+    std::string answer = a_output + "\n" + b_output;
+    return answer;
+}
 
 
 
@@ -130,10 +136,8 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         double match_score = 0.0;
         double delete_a_score = 0.0;
         double delete_b_score = 0.0;
-        
-        std::string match_path = "";
-        std::string delete_a_path = "";
-        std::string delete_b_path = "";
+
+        char match_path = 'm';
             
         //match or mismatch
         //Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
@@ -141,32 +145,30 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         if( currentNode->match == true )
         {
             match_score = m + matchNode.score;
-            match_path = "m" + matchNode.path;
+
         }
         else
         {
             match_score = c + matchNode.score;
-            match_path = "c" + matchNode.path;
+            char match_path = 'c';
         }
             
         //delete a; increase b and keep a
         Node deleteANode = *(table + position_2d(b_len, a_index, b_index+1));
         delete_a_score = d + deleteANode.score;
-        delete_a_path = "b" + deleteANode.path;
             
         //delete b; increase a and keep b
         Node deleteBNode = *(table + position_2d(b_len, a_index+1, b_index));
         delete_b_score = d + deleteBNode.score;
-        delete_b_path = "a" + deleteBNode.path;
 
             
         //calculate max scores
         double best_score = delete_b_score;
-        std::string best_path = delete_b_path;
+        char best_path = 'a';
         if(delete_a_score > best_score)
         {
             best_score = delete_a_score;
-            best_path = delete_a_path;
+            best_path = 'b';
         }
         if(match_score > best_score)
         {
@@ -192,18 +194,18 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         //we have no bases left in b
         //we must delete a
         Node * currentNode = (table + position_2d(b_len, a_index, b_index));
-        Node * nextNode = (table + position_2d(b_len, a_index, b_index+1));
-        currentNode->score = d + nextNode->score;
-        currentNode->path = "b" + nextNode->path;
+        Node nextNode = *(table + position_2d(b_len, a_index, b_index+1));
+        currentNode->score = d + nextNode.score;
+        currentNode->path = 'b';
     }
     else if(b_index == b_len-1)
     {
         //we have no bases left in a
         //we must delete b
         Node * currentNode = (table + position_2d(b_len, a_index, b_index));
-        Node * nextNode = (table + position_2d(b_len, a_index+1, b_index));
-        currentNode->score = d + nextNode->score;
-        currentNode->path = "a" + nextNode->path;
+        Node nextNode = *(table + position_2d(b_len, a_index+1, b_index));
+        currentNode->score = d + nextNode.score;
+        currentNode->path = 'a';
     }
 }
 
@@ -231,7 +233,6 @@ int main(int argc, char *argv[])
     bool d_read = false;
     bool a_read = false;
     bool b_read = false;
-
 
     if (argc > 11 || argc < 5)
     {
@@ -314,11 +315,11 @@ int main(int argc, char *argv[])
             //if( i<(a_len-1) || j<(b_len-1) )
                 ij_match = a[i]==b[j];
             //optimaility_table[i][j] = n;
-            Node n(i, j, ij_match, 0.0, "");
+            Node n(i, j, ij_match, 0.0, 'x');
             optimaility_table[position_2d(b_len, i, j)] = n;
         }
     }
-
+    
     //calculateNodeScore(m, c, d, a, b, 
     //              a_len, b_len, a_index, b_index,*opt_pointer)
     //calculate scores and paths of node on the tree
@@ -337,7 +338,7 @@ int main(int argc, char *argv[])
     }
 
     cout << optimaility_table->score << "\n";
-    cout << decode_path(a,b,optimaility_table->path) << "\n";
+    cout << decode_path(a, b, a_len, b_len, optimaility_table) << "\n";
 
     auto end = high_resolution_clock::now();
     auto total_runtime = duration_cast<microseconds>(end - start);
