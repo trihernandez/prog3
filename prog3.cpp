@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
         for(int j = 0; j< b_len; j++ )
         {
             bool ij_match = false;
-            if( i<(a_len-1) || i<(b_len-1) )
+            if( i<(a_len-1) || j<(b_len-1) )
                 ij_match = a[i]==b[j];
             //optimaility_table[i][j] = n;
             Node n(i, j, ij_match, 0.0, "");
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
     auto total_runtime = duration_cast<microseconds>(end - start);
     double runtime_in_seconds = (double)total_runtime.count() / 1000000.0;
 
-    cout << "Runtime: " << runtime_in_seconds << " s\n";
+    //cout << "Runtime: " << runtime_in_seconds << " s\n";
     
     return 0;
 }
