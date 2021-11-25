@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
         }
         for(int i = i_start; ((i<= ij_sum) && (i<a_len)); i++)
         {
-            j = ij_sum - i;
+            int j = ij_sum - i;
             if(i<a_len && j<b_len)
             {
                 calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, optimaility_table);
