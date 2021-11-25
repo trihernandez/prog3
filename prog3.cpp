@@ -175,6 +175,8 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
 
         currentNode->score = best_score;
         currentNode->path = best_path;
+
+        delete currentNode;
     }
     //otherwise, if we have no bases left in either A or B
     //Adding these else statements because there was a bug in an earlier version code where
@@ -194,6 +196,9 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         Node * nextNode = (table + position_2d(b_len, a_index, b_index+1));
         currentNode->score = d + nextNode->score;
         currentNode->path = "b" + nextNode->path;
+
+        delete currentNode;
+        delete nextNode;
     }
     else if(b_index == b_len-1)
     {
@@ -203,6 +208,9 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
         Node * nextNode = (table + position_2d(b_len, a_index+1, b_index));
         currentNode->score = d + nextNode->score;
         currentNode->path = "a" + nextNode->path;
+
+        delete currentNode;
+        delete nextNode;
     }
 }
 
