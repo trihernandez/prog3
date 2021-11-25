@@ -326,14 +326,16 @@ int main(int argc, char *argv[])
     for(int ij_sum = algorithm_start; ij_sum>=0; ij_sum--)
     {
         cout << ij_sum << "\n";
-        for(int i = 0; ((i<= ij_sum) && (i<a_len)); i++)
+        int i_start = 0
+        int j_start = ij_sum - i_start;
+        if(j >= b_len)
         {
-            int j = ij_sum - i;
-            if(j >= b_len)
-            {
-                j = b_len;
-                i = ij_sum - j;
-            }
+            j_start = b_len;
+            i_start = ij_sum - j_start;
+        }
+        for(int i = i_start; ((i<= ij_sum) && (i<a_len)); i++)
+        {
+            j = ij_sum - i;
             if(i<a_len && j<b_len)
             {
                 calculateNodeScore(m, c, d, a, b, a_len, b_len, i, j, optimaility_table);
