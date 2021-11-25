@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
         cout << ij_sum << "\n";
         int i_start = 0;
         int j_start = ij_sum - i_start;
-        if(j >= b_len)
+        if(j_start >= b_len)
         {
             j_start = b_len;
             i_start = ij_sum - j_start;
