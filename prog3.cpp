@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
         for(int j = 0; j< b_len; j++ )
         {
             bool ij_match = false;
-            if( i<(a_len-1) || j<(b_len-1) )
+            //if( i<(a_len-1) || j<(b_len-1) )
                 ij_match = a[i]==b[j];
             //optimaility_table[i][j] = n;
             Node n(i, j, ij_match, 0.0, "");
