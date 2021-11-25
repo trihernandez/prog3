@@ -137,7 +137,7 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
             
         //match or mismatch
         //Node * matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
-        Node matchNode = (table + position_2d(b_len, a_index+1, b_index+1));
+        Node matchNode = *(table + position_2d(b_len, a_index+1, b_index+1));
         if( currentNode->match == true )
         {
             match_score = m + matchNode->score;
@@ -151,13 +151,13 @@ void calculateNodeScore (double m, double c, double d, std::string a, std::strin
             
         //delete a; increase b and keep a
         //Node * deleteANode = (table + position_2d(b_len, a_index, b_index+1));
-        Node deleteANode = (table + position_2d(b_len, a_index, b_index+1));
+        Node deleteANode = *(table + position_2d(b_len, a_index, b_index+1));
         delete_a_score = d + deleteANode->score;
         delete_a_path = "b" + deleteANode->path;
             
         //delete b; increase a and keep b
         //Node * deleteBNode = (table + position_2d(b_len, a_index+1, b_index));
-        Node deleteBNode = (table + position_2d(b_len, a_index+1, b_index));
+        Node deleteBNode = *(table + position_2d(b_len, a_index+1, b_index));
         delete_b_score = d + deleteBNode->score;
         delete_b_path = "a" + deleteBNode->path;
 
